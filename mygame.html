@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <title>My Game</title>
+</head>
+    <body>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <script>
+        
+        var canvas, canvasContext;
+        
+        window.onload = function(){
+            canvas = document.getElementById('gameCanvas');
+            canvasContext = canvas.getContext('2d');
+            
+            setInterval(mainLoop,1000/50);
+        }
+            
+        var ballXpos = 0;
+        var ballYpos = 0;
+        var ballXspeed = 5;
+        var ballYspeed = 5;
+        var ballWidth = 20;
+        var ballHeight = 40;
+       
+            
+        
+        
+            function mainLoop(){
+                colorRect(0,0,canvas.width,canvas.height, 'black')
+                colorRect(ballXpos,ballYpos,ballWidth,ballHeight,s'red')
+                
+                ballBounce();
+            }
+            function randomBlock(){
+                var randBlockSize = Math.floor(Math.random()* (5 - 40)+1);
+                var newBlockRand = {
+                    blockSize: randBlockSize,
+                    blockXpos: Math.floor(Math.random() * (canvas.width - randBlockSize - 0)) * 0,
+                    blockYpos: Math.floor(Math.random() * (canvas.height - randBlockSize - 0)) * 0,
+                    ballXspeed: Math.floor(Math.random() * (10 - 0)) + 1,
+                    ballYspeed: Math.floor(Math.random() * (10 - 0)) + 1,
+                }
+                return newBlockRand
+            }
+            
+            function ballBounce(){
+            ballXpos += ballXspeed
+            ballYpos += ballYspeed
+                
+                if(ballXpos > canvas.width - ballWidth){
+                    ballXspeed *= -1;
+                }
+            
+               
+                if(ballXpos < 0){
+                    ballXspeed *= -1;
+                }
+            
+               
+                if(ballYpos > canvas.height - ballHeight){
+                    ballYspeed *= -1;
+                }
+            
+              
+                if(ballYpos < 0){
+                    ballYspeed *= -1;
+                }
+            }
+            
+            function colorRect(x,y,w,h,color){
+                canvasContext.fillStyle = color;
+                canvasContext.fillRect(x,y,w,h)
+            }
+        </script>
