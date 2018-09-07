@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+    <title>The Game</title>
+</head>
+    <body>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <script>
+        
+        var canvas, canvasContext;
+        
+        window.onload = function(){
+            canvas = document.getElementById('gameCanvas');
+            canvasContext = canvas.getContext('2d');
+            
+            setInterval(mainLoop,1000/50);
+        }
+            
+        var playerXpos = 0;
+        var playerYpos = 0;
+        var playerHeight = 20;
+        var playerWidth = 20;
+        var playerXspeed = 10;
+        var playerYspeed = 10;
+            
+        
+        
+        function mainLoop(){
+            colorRect(0,0,canvas.width,canvas.height,'black');
+            colorRect(playerXpos,playerYpos,playerHeight,playerWidth,'lightGreen');
+        }
+        
+            
+        function colorRect(x,y,w,h,color){
+			canvasContext.fillStyle = color;
+			canvasContext.fillRect(x,y,w,h);
+		}
+        
+        </script>
+        </body>
+</html>
