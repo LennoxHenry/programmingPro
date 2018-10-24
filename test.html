@@ -10,6 +10,14 @@
     <script>
         var canvas, canvasContext;
 
+        var username = '';
+        while (username == '' || username == null) {
+            username = prompt('What is your name') || '';
+        }
+        
+        var difficulty = prompt('How many Projectiles are you wanting')
+
+//MENTAL NOTE, FINISH THE SCORE.
         window.onload = function() {
             canvas = document.getElementById('gameCanvas');
             canvasContext = canvas.getContext('2d');
@@ -24,7 +32,7 @@
         var playerYpos = 0;
         const PLAYER_HEIGHT = 20;
         const PLAYER_WIDTH = 20;
-        var playerSpeed = 7;
+        var playerSpeed = 10;
 
         var bXpos = 150;
         var bYpos = 0;
@@ -32,9 +40,9 @@
         const B_WIDTH = 30;
         var bXspeed = 7;
         var bYspeed = 7;
-        
+
         var balls = [];
-        var ballTotal = 7;
+        var ballTotal = difficulty;
 
         const LEFT_ARROW_KEY = 37;
         const RIGHT_ARROW_KEY = 39;
@@ -42,6 +50,9 @@
         var rightArrowKeyPressed = false;
 
         var startingPos = true;
+        
+        var score = 0;
+        var gameRunning = true;
 
 
 
@@ -55,6 +66,10 @@
                 startPos();
                 startingPos = false;
             }
+            
+            if (gameRunning) {
+                textRender('Score: ' + score, 'white', canvas.width - 100, 25, '20px Arial');
+            }
 
 
             playerMove();
@@ -63,13 +78,13 @@
             collision();
         }
 
-        function createBalls(){
+        function createBalls() {
             const BALL_SIZE = 20;
-            var ballXpos = Math.floor(Math.random()*(canvas.width - BALL_SIZE));
-            var ballYpos = 0 - BALL_SIZE;
-            var ballXspeed = 5;
-            var ballYspeed = 5;
-            
+            var ballXpos = Math.floor(Math.random() * (canvas.width - BALL_SIZE));
+            var ballYpos = 0 - Math.floor(Math.random() * ((canvas.height / 2) - BALL_SIZE) + BALL_SIZE);
+            var ballXspeed = Math.floor(Math.random() * (8 - 2) + 2);
+            var ballYspeed = Math.floor(Math.random() * (8 - 2) + 2);
+
             var randBalls = {
                 BALL_SIZE: 20,
                 ballXpos: ballXpos,
@@ -82,7 +97,7 @@
 
 
         function ballMove() {
-            balls.forEach(function(ball,index){
+            balls.forEach(function(ball, index) {
                 ball.ballYpos += ball.ballYspeed;
                 ball.ballXpos += ball.ballXspeed;
                 if (ball.ballXpos > canvas.width - B_WIDTH) {
@@ -91,12 +106,20 @@
                 if (ball.ballXpos < 0) {
                     ball.ballXspeed *= -1;
                 }
-                if(ball.ballYpos > canvas.height){
-                   ball.ballYpos = 0;
+                if (ball.ballYpos > canvas.height) {
+                    ball.ballYpos = 0 - Math.floor(Math.random() * ((canvas.height / 2) - ball.BALL_SIZE) + ball.BALL_SIZE);
+                    ball.ballXspeed = Math.floor(Math.random() * (8 - 2) + 2);
+                    ball.ballYspeed = Math.floor(Math.random() * (8 - 2) + 2);
                 }
-                
+
+                if (ball.ballYpos + ball.BALL_SIZE > playerYpos && ball.ballYpos < playerYpos + PLAYER_HEIGHT &&
+                    ball.ballXpos + ball.BALL_SIZE > playerXpos && ball.ballXpos < playerXpos + PLAYER_WIDTH) {
+                    playerYpos = canvas.height - PLAYER_HEIGHT;
+                }
+
+
             });
-      
+
 
 
         }
@@ -115,7 +138,7 @@
             if (evt.keyCode == LEFT_ARROW_KEY) {
                 leftArrowKeyPressed = false;
             }
-             if (evt.keyCode == RIGHT_ARROW_KEY) {
+            if (evt.keyCode == RIGHT_ARROW_KEY) {
                 rightArrowKeyPressed = false;
             }
 
@@ -125,6 +148,7 @@
 
 
         function playerMove() {
+            playerYpos -= 2; // slowly moving up the screen
             if (leftArrowKeyPressed)
                 playerXpos -= playerSpeed;
             if (playerXpos < 0) {
@@ -139,6 +163,9 @@
                     playerXpos = 0;
                 }
             }
+            if(playerYpos < 0){
+                playerYpos = canvas.height - 0;
+            }
         }
 
 
@@ -146,28 +173,36 @@
             canvasContext.fillStyle = color;
             canvasContext.fillRect(x, y, w, h);
         }
-        
-        function ballsRender(){
-            balls.forEach(function(ball,index){
-                colorRect(ball.ballXpos, ball.ballYpos, ball.BALL_SIZE,ball.BALL_SIZE, 'red');
+
+        function ballsRender() {
+            balls.forEach(function(ball, index) {
+                colorRect(ball.ballXpos, ball.ballYpos, ball.BALL_SIZE, ball.BALL_SIZE, 'red');
             });
         }
 
         function startPos() {
             playerXpos = canvas.width / 2 - PLAYER_WIDTH / 2;
             playerYpos = canvas.height - PLAYER_HEIGHT;
-            
-            for(i=0;i<ballTotal; i++){
+
+            for (i = 0; i < ballTotal; i++) {
                 balls.push(createBalls());
             }
         }
-        
-        function collision(){
-            if (playerYpos + PLAYER_HEIGHT, PLAYER_WIDTH > bYpos && playerYpos < bYpos + B_HEIGHT, B_WIDTH
-               && playerXpos + PLAYER_HEIGHT, PLAYER_WIDTH > bXpos && playerYpos < bXpos + B_HEIGHT, B_WIDTH){
+
+        function collision() {
+            if (playerYpos + PLAYER_HEIGHT, PLAYER_WIDTH > bYpos && playerYpos < bYpos + B_HEIGHT, B_WIDTH &&
+                playerXpos + PLAYER_HEIGHT, PLAYER_WIDTH > bXpos && playerYpos < bXpos + B_HEIGHT, B_WIDTH) {
                 starting = true;
             }
         }
+        
+        function textRender(text, c, x, y, font) {
+            canvasContext.fillStyle = c;
+            canvasContext.font = font;
+            canvasContext.fillText(text, x, y);
+}
+        
+    
 
     </script>
 </body>
