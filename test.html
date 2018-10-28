@@ -9,15 +9,15 @@
     <canvas id="gameCanvas" width="400" height="700"></canvas>
     <script>
         var canvas, canvasContext;
-
         var username = '';
         while (username == '' || username == null) {
-            username = prompt('What is your name') || '';
+            username = prompt('What is your name') || ''; //username
         }
         
-        var difficulty = prompt('How many Projectiles are you wanting')
+        var difficulty = prompt('How many Projectiles are you wanting') //difficulty
 
-//MENTAL NOTE, FINISH THE SCORE.
+        
+        
         window.onload = function() {
             canvas = document.getElementById('gameCanvas');
             canvasContext = canvas.getContext('2d');
@@ -27,35 +27,44 @@
 
             setInterval(mainLoop, 1000 / 50);
         }
-
+        //Player
+        
         var playerXpos = 0;
         var playerYpos = 0;
         const PLAYER_HEIGHT = 20;
         const PLAYER_WIDTH = 20;
         var playerSpeed = 10;
-
+        
+        //Ball and Projectile
+        
         var bXpos = 150;
         var bYpos = 0;
         const B_HEIGHT = 30;
         const B_WIDTH = 30;
         var bXspeed = 7;
         var bYspeed = 7;
-
         var balls = [];
         var ballTotal = difficulty;
 
+        //Player Move
+        
         const LEFT_ARROW_KEY = 37;
         const RIGHT_ARROW_KEY = 39;
         var leftArrowKeyPressed = false;
         var rightArrowKeyPressed = false;
 
+        //Player Starting Position
+        
         var startingPos = true;
         
+        //Score
+
         var score = 0;
         var gameRunning = true;
+        var lives = 3;
 
 
-
+        //MAIN LOOP
         function mainLoop() {
             colorRect(0, 0, canvas.width, canvas.height, 'black');
             colorRect(playerXpos, playerYpos, PLAYER_WIDTH, PLAYER_HEIGHT, 'lightGreen');
@@ -67,15 +76,24 @@
                 startingPos = false;
             }
             
+
             if (gameRunning) {
+
+
                 textRender('Score: ' + score, 'white', canvas.width - 100, 25, '20px Arial');
+                textRender('Lives: ' + lives, 'white', 15, 25, '20px Arial');
+
+
+
+                playerMove();
+                ballsRender();
+                ballMove();
+                collision();
+
+            } else {
+                console.log('score is :' + score)
+                textRender(username + ', Your Overall Score Is: ' + score, 'white', 15, 25, '20px Arial');
             }
-
-
-            playerMove();
-            ballsRender();
-            ballMove();
-            collision();
         }
 
         function createBalls() {
@@ -95,7 +113,7 @@
             return randBalls;
         }
 
-
+        //Makes Projectiles Move
         function ballMove() {
             balls.forEach(function(ball, index) {
                 ball.ballYpos += ball.ballYspeed;
@@ -115,6 +133,18 @@
                 if (ball.ballYpos + ball.BALL_SIZE > playerYpos && ball.ballYpos < playerYpos + PLAYER_HEIGHT &&
                     ball.ballXpos + ball.BALL_SIZE > playerXpos && ball.ballXpos < playerXpos + PLAYER_WIDTH) {
                     playerYpos = canvas.height - PLAYER_HEIGHT;
+
+                    lives--;
+                    console.log(lives);
+                    playerXpos = 0;
+                    balls.forEach(function(ball, index) {
+                            ball.ballYpos = 0 - Math.floor(Math.random() * ((canvas.height / 2) - ball.BALL_SIZE) + ball.BALL_SIZE);
+                            ball.ballXspeed = Math.floor(Math.random() * (8 - 2) + 2);
+                            ball.ballYspeed = Math.floor(Math.random() * (8 - 2) + 2);
+                    });
+                    if (lives < 1) {
+                        gameRunning = false;
+                    }
                 }
 
 
@@ -123,7 +153,7 @@
 
 
         }
-
+        // Makes Player Move
         function keyPressed(evt) {
             if (evt.keyCode == LEFT_ARROW_KEY) {
                 leftArrowKeyPressed = true;
@@ -146,7 +176,7 @@
 
 
 
-
+        //Also makes player move
         function playerMove() {
             playerYpos -= 2; // slowly moving up the screen
             if (leftArrowKeyPressed)
@@ -163,10 +193,13 @@
                     playerXpos = 0;
                 }
             }
-            if(playerYpos < 0){
+            if (playerYpos < 0) {
                 playerYpos = canvas.height - 0;
+                score++;
+
             }
         }
+
 
 
         function colorRect(x, y, w, h, color) {
@@ -195,15 +228,13 @@
                 starting = true;
             }
         }
-        
+
         function textRender(text, c, x, y, font) {
             canvasContext.fillStyle = c;
             canvasContext.font = font;
             canvasContext.fillText(text, x, y);
-}
-        
-    
-
+        }
+   
     </script>
 </body>
 
